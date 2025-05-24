@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-n8n
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: my-n8n
+  template:
+    metadata:
+      labels:
+        app: my-n8n
+    spec:
+      containers:
+        - name: n8n
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 5678
+          volumeMounts:
+            {{- toYaml .Values.volumeMounts | nindent 12 }}
+          securityContext:
+            runAsUser: 0
+            allowPrivilegeEscalation: true
+      volumes:
+        {{- toYaml .Values.volumes | nindent 8 }}
+

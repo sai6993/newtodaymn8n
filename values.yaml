@@ -1,0 +1,94 @@
+# Default values for my-app.
+
+replicaCount: 1
+
+image:
+  repository: saivenkatvaraprasady/custom-n8n-with-docker
+  pullPolicy: IfNotPresent
+  tag: latest
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+
+securityContext: {}
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+
+resources: {}
+
+livenessProbe:
+  httpGet:
+    path: /
+    port: http
+
+readinessProbe:
+  httpGet:
+    path: /
+    port: http
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+
+volumes:
+  - name: dockersock
+    hostPath:
+      path: /var/run/docker.sock
+      type: Socket
+  - name: kube-config
+    hostPath:
+      path: /home/bsetech/.kube/config
+  - name: minikube-dir
+    hostPath:
+      path: /home/bsetech/.minikube
+  - name: my-app-code
+    hostPath:
+      path: /home/bsetech/my-app
+
+volumeMounts:
+  - name: dockersock
+    mountPath: /var/run/docker.sock
+    readOnly: true
+  - name: kube-config
+    mountPath: /home/node/.kube/config
+    subPath: config
+    readOnly: true
+  - name: minikube-dir
+    mountPath: /home/bsetech/.minikube
+    readOnly: true
+  - name: my-app-code
+    mountPath: /home/node/my-app
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
